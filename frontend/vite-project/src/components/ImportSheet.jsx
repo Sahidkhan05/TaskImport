@@ -1,27 +1,30 @@
 import { useState } from "react";
 import axios from "axios";
 
-const ImportSheet = ({ refreshTasks }) => {  // ✅ prop add
+const ImportSheet = ({ refreshTasks }) => {
   const [url, setUrl] = useState("");
 
   const handleImport = async () => {
-    if (!url.trim()) {   // ✅ trim validation
+    if (!url.trim()) {
       alert("Please enter a Google Sheet link");
       return;
     }
 
     try {
-      await axios.post("http://localhost:5000/api/tasks/import", {
-        sheetUrl: url,
-      });
+      await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/tasks/import`,
+        {
+          sheetUrl: url,
+        }
+      );
 
       alert("Task imported successfully ✅");
       setUrl("");
 
-      refreshTasks && refreshTasks();   // ✅ auto refresh table
+      if (refreshTasks) refreshTasks();
 
     } catch (err) {
-      console.log(err);   // ✅ debug
+      console.error("Import Error:", err);
       alert("Error during task import ❌");
     }
   };

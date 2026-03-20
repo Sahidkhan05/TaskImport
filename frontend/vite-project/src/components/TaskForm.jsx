@@ -5,7 +5,7 @@ export default function TaskForm({ closeModal, refreshTasks }) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [dueDate, setDueDate] = useState("");
-  const [loading, setLoading] = useState(false); // ✅ loading add
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -16,28 +16,31 @@ export default function TaskForm({ closeModal, refreshTasks }) {
     }
 
     try {
-      setLoading(true); // ✅ start loading
+      setLoading(true);
 
-      await axios.post("http://localhost:5000/api/tasks", {
-        title,
-        description,
-        dueDate,
-      });
+      await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/tasks`,
+        {
+          title,
+          description,
+          dueDate,
+        }
+      );
 
       alert("Task Added ✅");
 
-      refreshTasks && refreshTasks();   // ✅ safe call
-      closeModal && closeModal();
+      if (refreshTasks) refreshTasks();
+      if (closeModal) closeModal();
 
       setTitle("");
       setDescription("");
       setDueDate("");
 
     } catch (err) {
-      console.log(err);
+      console.error("Add Task Error:", err);
       alert("Error adding task ❌");
     } finally {
-      setLoading(false); // ✅ stop loading
+      setLoading(false);
     }
   };
 

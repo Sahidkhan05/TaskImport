@@ -5,46 +5,54 @@ export default function TaskTable({ tasks = [], refreshTasks }) {
   // Delete
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:5000/api/tasks/${id}`);
-      refreshTasks && refreshTasks(); // ✅
+      await axios.delete(
+        `${import.meta.env.VITE_API_URL}/api/tasks/${id}`
+      );
+      if (refreshTasks) refreshTasks();
     } catch (err) {
-      console.log(err);
+      console.error("Delete Error:", err);
     }
   };
 
   // Edit
   const handleEdit = async (task) => {
-  const newTitle = window.prompt("Edit Title", task.title || "");
-  if (newTitle === null) return;
+    const newTitle = window.prompt("Edit Title", task.title || "");
+    if (newTitle === null) return;
 
-  const newDesc = window.prompt("Edit Description", task.description || "");
-  if (newDesc === null) return;
+    const newDesc = window.prompt("Edit Description", task.description || "");
+    if (newDesc === null) return;
 
-  try {
-    await axios.put(`http://localhost:5000/api/tasks/${task._id}`, {
-      title: newTitle.trim(),
-      description: newDesc.trim(),
-      completed: task.completed,
-      dueDate: task.dueDate,
-    });
+    try {
+      await axios.put(
+        `${import.meta.env.VITE_API_URL}/api/tasks/${task._id}`,
+        {
+          title: newTitle.trim(),
+          description: newDesc.trim(),
+          completed: task.completed,
+          dueDate: task.dueDate,
+        }
+      );
 
-    refreshTasks && refreshTasks();
-  } catch (err) {
-    console.log(err);
-  }
-};
+      if (refreshTasks) refreshTasks();
+    } catch (err) {
+      console.error("Edit Error:", err);
+    }
+  };
 
   // Toggle
   const toggleComplete = async (task) => {
     try {
-      await axios.put(`http://localhost:5000/api/tasks/${task._id}`, {
-        ...task,
-        completed: !task.completed,
-      });
+      await axios.put(
+        `${import.meta.env.VITE_API_URL}/api/tasks/${task._id}`,
+        {
+          ...task,
+          completed: !task.completed,
+        }
+      );
 
-      refreshTasks && refreshTasks(); // ✅
+      if (refreshTasks) refreshTasks();
     } catch (err) {
-      console.log(err);
+      console.error("Toggle Error:", err);
     }
   };
 
@@ -94,15 +102,15 @@ export default function TaskTable({ tasks = [], refreshTasks }) {
 
                   <td className="py-3 px-4 text-center">
                     <button
-  onClick={() => toggleComplete(task)}
-  className={`px-4 py-1 rounded-full text-sm font-medium transition ${
-    task.completed
-      ? "bg-green-500 text-white"
-      : "bg-yellow-400 text-black"
-  }`}
->
-  {task.completed ? "✔ Done" : "⏳ Pending"}
-</button>
+                      onClick={() => toggleComplete(task)}
+                      className={`px-4 py-1 rounded-full text-sm font-medium transition ${
+                        task.completed
+                          ? "bg-green-500 text-white"
+                          : "bg-yellow-400 text-black"
+                      }`}
+                    >
+                      {task.completed ? "✔ Done" : "⏳ Pending"}
+                    </button>
                   </td>
 
                   <td className="py-3 px-4 text-center space-x-2">
